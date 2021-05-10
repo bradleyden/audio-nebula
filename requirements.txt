@@ -1,0 +1,6 @@
+numpy==1.18.1
+PyAudio==0.2.11
+-e git+https://github.com/tyiannak/pyAudioAnalysis.git@37dc22f34bf1a579a9e95adbb0e8118062d69c2e#egg=pyAudioAnalysis
+PyQt5==5.15.0
+PyYAML==5.3.1
+vispy==0.6.6
