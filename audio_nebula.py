@@ -3,7 +3,7 @@ import numpy as np
 import sys, getopt
 import os
 import time
-from pyAudioAnalysis import ShortTermFeatures
+from src.pyaudioanalysis.pyAudioAnalysis import ShortTermFeatures
 from vispy import gloo, app
 from vispy.util.transforms import perspective, translate, rotate
 from vispy.gloo import Program
@@ -52,12 +52,14 @@ class Canvas(app.Canvas):
         gloo.set_clear_color((0, 0, 0, 1))
 
         self.timer = app.Timer('auto', connect=self.on_timer, start=True)
+        self.sound_data_queue = sound_data_queue
+
         self.intense_color = get_setting('intensity_color')
         self.show()
 
     # Key press events to drive user interactivity while the visualization is running
     def on_key_press(self, event):
-        if event.text == 'x':
+        if event.text == 'q':
             self.close()
         # 'p' and 'o' will adjust mic sensitivity by applying a universal multiplier over
         # data attributes driven by incoming audio energy (amplitude) data.
@@ -67,7 +69,7 @@ class Canvas(app.Canvas):
             set_setting('mic_sensitivity', get_setting('mic_sensitivity') - .005)
         # 'q' will toggle color schemes by dictating whether high intensity audio data is
         # visualized by red or green in contrast with blue for low-intensity audio.
-        if event.text == 'q':
+        if event.text == 'c':
             self.intense_color = toggle_color(self.intense_color)
             set_setting('intensity_color', self.intense_color)
 
@@ -85,7 +87,7 @@ class Canvas(app.Canvas):
 
     def on_timer(self, event):
         # Get sound data from queue
-        sound_data = sound_data_queue.get()
+        sound_data = self.sound_data_queue.get()
         # get energy and frequency data, clamped and normalized as a multiplier value
         energy = clamp(sound_data['energy'], 0, 40) / 2
         frequency = clamp(sound_data['frequency'], 0, 20)
@@ -145,7 +147,7 @@ def start_recording(sound_data_queue):
     CHANNELS = 1
     RATE = 44100
     CHUNK = 1024
-    
+
     # Initialize PyAudio
     audio = pyaudio.PyAudio()
 
@@ -195,10 +197,21 @@ def start_visualization(sound_data_queue):
  
 if __name__ == '__main__':
     # Get user args and options
-    opts, args = getopt.getopt(sys.argv[1:], "rh:w:", ["reset", "height=", "width="])
+    opts, args = getopt.getopt(sys.argv[1:], "Hrh:w:", ["help", "reset", "height=", "width="])
 
     # Save default settings before reading from file if reset arg passed
     for opt, arg in opts:
+        if opt in ("-H", "--help"):
+            print(
+                """
+                Usage: python3 audio_nebula.py <args>
+                    -H/--help -----------------------------> Usage tips
+                    -r/--reset ----------------------------> Reset to default settings
+                    -h/--height <positive integer> --------> Height of visualizer window in pixels
+                    -w/--width <positive integer> ---------> Width of visualizer window in pixels
+                """
+            )
+            sys.exit(0)
         if opt in ("-r", "--reset"):
             save_settings()
 
@@ -208,16 +221,24 @@ if __name__ == '__main__':
     for opt, arg in opts:
         if opt in ("-w", "--width"):
             try:
-                set_setting('width', int(arg))
+                if int(arg) > 0:
+                    set_setting('width', int(arg))
+                else:
+                    print("Width argument must be a positive integer")
+                    sys.exit(2)
             except ValueError:
-                print("Width argument must be an integer")
+                print("Width argument must be a positive integer")
                 sys.exit(2)
 
         elif opt in ("-h", "--height"):
             try:
-                set_setting('height', int(arg))
+                if int(arg) > 0:
+                    set_setting('height', int(arg))
+                else:
+                    print("Height argument must be a positive integer")
+                    sys.exit(2)
             except ValueError:
-                print("Height argument must be an integer")
+                print("Height argument must be a positive integer")
                 sys.exit(2)
 
     # Initialize queue for passing sound data
@@ -235,4 +256,5 @@ if __name__ == '__main__':
 
     # Keep audio process open as long as visualization process remains open
     viz_process.join()
+    sound_data_queue.close()
     audio_process.terminate()
