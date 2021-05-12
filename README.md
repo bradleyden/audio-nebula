@@ -1,6 +1,8 @@
 # Audio Nebula
 An astronomy-inspired audio visualizer written in Python
 
+![AudioNebula](https://user-images.githubusercontent.com/28875814/117913204-f5091980-b2ae-11eb-8cdd-fb3eec726d51.png)
+
 ## Introduction
 Audio Nebula is an audio visualizer that reads input from the microphone and renders a visualization in realtime based on the user's audio input. A particle cloud is used to create a visual reminiscent of a swirling galaxy or nebula cloud that reacts to sound.
 
