@@ -14,7 +14,7 @@ from utils import save_settings, validate_settings, read_settings, get_setting, 
 # VisPy Visualization Canvas Class
 class Canvas(app.Canvas):
     def __init__(self, sound_data_queue):
-        app.Canvas.__init__(self, keys='interactive', size=(get_setting('width'), get_setting('height')))
+        app.Canvas.__init__(self, title='Audio Nebula', keys='interactive', size=(get_setting('width'), get_setting('height')))
         ps = 1
 
         # Initialize vertex data for default state. This data will be updated by incoming audio data
@@ -224,10 +224,10 @@ if __name__ == '__main__':
                 if int(arg) > 0:
                     set_setting('width', int(arg))
                 else:
-                    print("Width argument must be a positive integer")
+                    print("Width argument must be greater than 0")
                     sys.exit(2)
             except ValueError:
-                print("Width argument must be a positive integer")
+                print("Width argument must be a positive integer greater than 0")
                 sys.exit(2)
 
         elif opt in ("-h", "--height"):
@@ -235,10 +235,10 @@ if __name__ == '__main__':
                 if int(arg) > 0:
                     set_setting('height', int(arg))
                 else:
-                    print("Height argument must be a positive integer")
+                    print("Height argument must be greater than 0")
                     sys.exit(2)
             except ValueError:
-                print("Height argument must be a positive integer")
+                print("Height argument must be a positive integer greater than 0")
                 sys.exit(2)
 
     # Initialize queue for passing sound data
