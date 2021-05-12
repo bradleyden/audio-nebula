@@ -32,17 +32,17 @@ Optionally, the following flags can be used when running the program:
 * -w, --width -> Set the visualization window width, in pixels. Must be followed by an integer greater than 0.
 * -r, --reset -> Reset all settings to program defaults. This flag takes no further input.
 
-Once the program starts, you should immediately see a particle cloud that responds to your microphone input in realtime.
-
 ## Settings
 Program settings will be saved to a file called `settings.yml`, and if this file is missing or invalid, program defaults will be used and saved automatically when the program is run.
 
-Settings will be saved automatically as they are adjusted, and can be manually reset via the `--reset` flag.
+Settings will be saved automatically as they are adjusted. Adjusting the color scheme, mic sensitivity, or application window dimensions (via command line arguments only) will all be preserved between uses.
+
+All of these settings can be reset at any time by passing the `--reset` flag when launching the program.
 
 ## User Guide
 While the program is running, you should immediately notice that the visualization is responding to your connected mic input.
 
-A few controls can be used while the visualization is running to customize how it looks and behaves. Adjusting these settings will automatically save them so that they will be retained next time you run the program, until you explicitly reset defaults.
+A few controls can be used while the visualization is running to customize how it looks and behaves. As mentioned above, adjusting these settings will automatically save them so that they will be retained next time you run the program, until you explicitly reset defaults.
 
 * `o`: Decrease microphone sensitivity. This will affect any visualiztion feature driven by audio energy.
 * `p`: Increase microphone sensitivity. This will affect any visualiztion feature driven by audio energy.
@@ -51,9 +51,9 @@ A few controls can be used while the visualization is running to customize how i
 To end the visualization and quit the program, hit `q`, `esc`, or just close the visualizaiton window.
 
 ## Further Reading
-[PyAudio](https://github.com/jleb/pyaudio)
-[pyAudioAnalysis](https://github.com/tyiannak/pyAudioAnalysis)
-[VisPy](https://github.com/vispy/vispy)
+* [PyAudio](https://github.com/jleb/pyaudio)
+* [pyAudioAnalysis](https://github.com/tyiannak/pyAudioAnalysis)
+* [VisPy](https://github.com/vispy/vispy)
 
 
 
