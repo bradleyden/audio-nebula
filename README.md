@@ -10,7 +10,7 @@ Audio energy (amplitude) is used to affect the color and movement speed of parti
 
 Frequency is used to affect the size and opacity of particles.
 
-Video walkthrough available here: https://www.youtube.com/watch?v=242zK0Id2nQ
+Video walkthrough can be viewed here: https://www.youtube.com/watch?v=242zK0Id2nQ
 
 ## Setup Guide
 Clone this repository to your local machine with a Python 3 development environment. This project relies on a GPU-driven visual output, so it may not work in an IDE or another virtual Python environment.
@@ -24,15 +24,15 @@ Clone this repository to your local machine with a Python 3 development environm
 
 Depending on your system configuration, some dependencies may need to be installed individually if installing via the requirements files does not work. This program was developed and primarily tested on a Kubuntu system running Python 3.8.6. I did verify that it will run on Mac as well, but visuals and performance may differ.
 
-Your system must have a microphone connected as the active audio input to behave as intended.
+Your system must have a microphone connected as the primary audio input for the program to behave as intended.
 
 Run the program with `python3 audio-nebula.py`
 
 Optionally, the following flags can be used when running the program:
-* -H, --help -> Get help about program usage. This flag takes no further input.
-* -h, --height -> Set the visualization window height, in pixels. Must be followed by an integer greater than 0.
-* -w, --width -> Set the visualization window width, in pixels. Must be followed by an integer greater than 0.
-* -r, --reset -> Reset all settings to program defaults. This flag takes no further input.
+* -H, --help -----> Get help about program usage. This flag takes no further input.
+* -h, --height ---> Set the visualization window height, in pixels. Must be followed by an integer greater than 0.
+* -w, --width ----> Set the visualization window width, in pixels. Must be followed by an integer greater than 0.
+* -r, --reset ----> Reset all settings to program defaults. This flag takes no further input.
 
 ## Settings
 Program settings will be saved to a file called `settings.yml`, and if this file is missing or invalid, program defaults will be used and saved automatically when the program is run.
@@ -42,7 +42,7 @@ Settings will be saved automatically as they are adjusted. Adjusting the color s
 All of these settings can be reset at any time by passing the `--reset` flag when launching the program.
 
 ## User Guide
-While the program is running, you should immediately notice that the visualization is responding to your connected mic input.
+When the program starts, a new window should appear displaying a point cloud graphic output. You should immediately notice that the visualization is responding to your connected mic input.
 
 A few controls can be used while the visualization is running to customize how it looks and behaves. As mentioned above, adjusting these settings will automatically save them so that they will be retained next time you run the program, until you explicitly reset defaults.
 

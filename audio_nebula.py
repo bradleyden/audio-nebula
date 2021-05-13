@@ -2,7 +2,6 @@ import pyaudio
 import numpy as np
 import sys, getopt
 import os
-import time
 from src.pyaudioanalysis.pyAudioAnalysis import ShortTermFeatures
 from vispy import gloo, app
 from vispy.util.transforms import perspective, translate, rotate
@@ -28,34 +27,32 @@ class Canvas(app.Canvas):
         self.data['a_bg_color'] = 1, 1, 1, .5
         self.data['a_fg_color'] = 1, 1, 1, 0
         self.data['a_size'] = np.random.uniform(5*ps, 10*ps, self.particle_count)
-        u_linewidth = 0
-        u_antialias = 1.0
 
+        # Initialize canvas class attributes
         self.translate = 2.5
         self.program = gloo.Program(vert(), frag())
-        self.view = translate((0, 0, -self.translate))
-        self.model = np.eye(4, dtype=np.float32)
         self.projection = np.eye(4, dtype=np.float32)
         self.current_energy = 0
-
-        self.program.bind(gloo.VertexBuffer(self.data))
-        self.program['u_linewidth'] = u_linewidth
-        self.program['u_antialias'] = u_antialias
-        self.program['u_model'] = self.model
-        self.program['u_view'] = self.view
-        self.program['u_size'] = 5 / self.translate
-
         self.theta = 0
         self.phi = 0
+        self.intense_color = get_setting('intensity_color')
+        self.sound_data_queue = sound_data_queue
+        self.timer = app.Timer('auto', connect=self.on_timer, start=True)
+
+        # Bind data to buffer and initialize program data
+        self.program.bind(gloo.VertexBuffer(self.data))
+        self.program['u_linewidth'] = 0
+        self.program['u_antialias'] = 1.0
+        self.program['u_model'] = np.eye(4, dtype=np.float32)
+        self.program['u_view'] = translate((0, 0, -self.translate))
+        self.program['u_size'] = 5 / self.translate
 
         gloo.set_state('translucent', clear_color='white')
         gloo.set_clear_color((0, 0, 0, 1))
 
-        self.timer = app.Timer('auto', connect=self.on_timer, start=True)
-        self.sound_data_queue = sound_data_queue
-
-        self.intense_color = get_setting('intensity_color')
+        # Render visualization canvas
         self.show()
+
 
     # Key press events to drive user interactivity while the visualization is running
     def on_key_press(self, event):
@@ -67,11 +64,12 @@ class Canvas(app.Canvas):
             set_setting('mic_sensitivity', get_setting('mic_sensitivity') + .005)
         if event.text == 'o' and get_setting('mic_sensitivity') > 0:
             set_setting('mic_sensitivity', get_setting('mic_sensitivity') - .005)
-        # 'q' will toggle color schemes by dictating whether high intensity audio data is
+        # 'c' will toggle color schemes by dictating whether high intensity audio data is
         # visualized by red or green in contrast with blue for low-intensity audio.
         if event.text == 'c':
             self.intense_color = toggle_color(self.intense_color)
             set_setting('intensity_color', self.intense_color)
+
 
     # Function to handle when the VisPy canvas window is resized by the user.
     def on_resize(self, event):
@@ -80,10 +78,12 @@ class Canvas(app.Canvas):
                                       float(self.size[1]), 1.0, 1000.0)
         self.program['u_projection'] = self.projection
 
+
     # Function to handle drawing the VisPy visualization
     def on_draw(self, event):
         gloo.clear()
         self.program.draw('points')
+
 
     def on_timer(self, event):
         # Get sound data from queue
@@ -107,7 +107,7 @@ class Canvas(app.Canvas):
         self.model = np.dot(rotate(self.theta, (0, 0, 1)),
                             rotate(self.phi, (0, 1, 0)))
         self.program['u_model'] = self.model
-       
+
         # Ignore frequency if total energy is below 2. This will prevent frequncy flicker that
         # sometimes occurs when there is minimal audio input to analyize.
         if energy < 2:
@@ -140,6 +140,7 @@ class Canvas(app.Canvas):
         self.program.bind(gloo.VertexBuffer(self.data))
         self.update()
 
+
 # Stream audio from user's mic input
 def start_recording(sound_data_queue):
     # Initilalize audio input settings and constants
@@ -166,10 +167,10 @@ def start_recording(sound_data_queue):
         # Temporarily suppress stdout to prevent debug print statements in pyAudioAnalysis source 
         # code from flooding console output.
         sys.stdout = open(os.devnull, "w")
-        
+  
         # Get raw frequency data for sample via pyAudioAnalysis spetrogram function
         F, time, freq = ShortTermFeatures.spectrogram(signal, RATE, window=0.050*(RATE/CHUNK), step=0.025*(RATE/CHUNK))
-        
+   
         # Re-enable stdout
         sys.stdout = sys.__stdout__
 
@@ -185,16 +186,17 @@ def start_recording(sound_data_queue):
             'energy': energy,
             'frequency': frequency,
         }
-        
+   
         # Send sound data struct to queue to be handled by visualizer processes
         sound_data_queue.put(sound_data)
+
 
 # Function to initialize our VisPy Canvas class and start the VisPy app
 def start_visualization(sound_data_queue):
         c = Canvas(sound_data_queue)
         app.run()
 
- 
+
 if __name__ == '__main__':
     # Get user args and options
     opts, args = getopt.getopt(sys.argv[1:], "Hrh:w:", ["help", "reset", "height=", "width="])

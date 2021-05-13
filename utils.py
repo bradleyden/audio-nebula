@@ -19,6 +19,7 @@ def save_settings():
     else:
         print("Current settings are invalid and cannot be saved.")
 
+
 # Validate a settings object to ensure values are safe to load or save
 def validate_settings(settings_data):
     return(
@@ -48,16 +49,19 @@ def read_settings():
         print("No Settings file found, generating defaults")
         save_settings()
 
+
 # Get a specified setting value from memory
 def get_setting(key):
     global settings
     return settings[key]
+
 
 # Set a specified setting to a given value in memory, then save it
 def set_setting(key, value):
     global settings
     settings[key] = value
     save_settings()
+
 
 # Utility function to clamp a numeric value based on a max and min value
 def clamp(n, minn, maxn):
@@ -66,6 +70,7 @@ def clamp(n, minn, maxn):
     if n > maxn:
         return maxn
     return n
+
 
 # Utility function to return the opposite of whichever color is passed in
 # to avoid repetative conditional logic.
